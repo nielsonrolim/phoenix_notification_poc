@@ -42,7 +42,8 @@ defmodule NotificationPoc.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:mongodb, ">= 0.0.0"},
-      {:poolboy, ">= 0.0.0"}
+      {:poolboy, ">= 0.0.0"},
+      {:atomic_map, "~> 0.8"}
     ]
   end
 
