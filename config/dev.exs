@@ -48,7 +48,9 @@ config :phoenix, :stacktrace_depth, 20
 config :phoenix, :plug_init_mode, :runtime
 
 # Configure your database
-config :notification_poc, :db_config,
-  name: :mongo,
-  database: "notification_poc_db",
-  seeds: ["mongodb:27017"]
+config :notification_poc, NotificationPoc.Repo,
+  username: "gleydson",
+  password: "123456",
+  database: "notification_poc_dev",
+  hostname: "localhost",
+  pool_size: 10
