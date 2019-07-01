@@ -7,13 +7,14 @@ defmodule NotificationPoc.Application do
 
   def start(_type, _args) do
     # List all child processes to be supervised
+    database_config = Application.get_env(:notification_poc, :db_config)
+
     children = [
-      # Start the Ecto repository
-      NotificationPoc.Repo,
-      # Start the endpoint when the application starts
-      NotificationPocWeb.Endpoint
-      # Starts a worker by calling: NotificationPoc.Worker.start_link(arg)
-      # {NotificationPoc.Worker, arg},
+      NotificationPocWeb.Endpoint,
+      %{
+        id: Mongo,
+        start: {Mongo, :start_link, [database_config]}
+      }
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
