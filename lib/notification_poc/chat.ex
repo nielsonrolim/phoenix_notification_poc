@@ -8,97 +8,31 @@ defmodule NotificationPoc.Chat do
 
   alias NotificationPoc.Chat.Conversation
 
-  @doc """
-  Returns the list of conversations.
-
-  ## Examples
-
-      iex> list_conversations()
-      [%Conversation{}, ...]
-
-  """
   def list_conversations do
     Repo.all(Conversation)
   end
 
-  @doc """
-  Gets a single conversation.
+  def get_conversation!(sender_fractal_id, recipient_fractal_id) do
+    Repo.one(
+      from c in Conversation,
+        where:
+          c.sender_fractal_id in [^sender_fractal_id, ^recipient_fractal_id] and
+          c.recipient_fractal_id in [^sender_fractal_id, ^recipient_fractal_id]
+    )
+  end
 
-  Raises `Ecto.NoResultsError` if the Conversation does not exist.
-
-  ## Examples
-
-      iex> get_conversation!(123)
-      %Conversation{}
-
-      iex> get_conversation!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_conversation!(id), do: Repo.get!(Conversation, id)
-
-  @doc """
-  Creates a conversation.
-
-  ## Examples
-
-      iex> create_conversation(%{field: value})
-      {:ok, %Conversation{}}
-
-      iex> create_conversation(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def create_conversation(attrs \\ %{}) do
-    %Conversation{}
-    |> Conversation.changeset(attrs)
-    |> Repo.insert()
-  end
+    {messages, attrs} = Map.pop(attrs, :messages)
 
-  @doc """
-  Updates a conversation.
+    case get_conversation!(attrs[:sender_fractal_id], attrs[:recipient_fractal_id]) do
+      nil ->
+        Conversation.changeset(%Conversation{}, attrs)
+        |> Ecto.Changeset.put_embed(:messages, messages)
 
-  ## Examples
-
-      iex> update_conversation(conversation, %{field: new_value})
-      {:ok, %Conversation{}}
-
-      iex> update_conversation(conversation, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_conversation(%Conversation{} = conversation, attrs) do
-    conversation
-    |> Conversation.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a Conversation.
-
-  ## Examples
-
-      iex> delete_conversation(conversation)
-      {:ok, %Conversation{}}
-
-      iex> delete_conversation(conversation)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_conversation(%Conversation{} = conversation) do
-    Repo.delete(conversation)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking conversation changes.
-
-  ## Examples
-
-      iex> change_conversation(conversation)
-      %Ecto.Changeset{source: %Conversation{}}
-
-  """
-  def change_conversation(%Conversation{} = conversation) do
-    Conversation.changeset(conversation, %{})
+      conversation ->
+        Conversation.changeset(conversation, attrs)
+        |> Ecto.Changeset.put_embed(:messages, messages ++ conversation.messages)
+    end
+      |> Repo.insert_or_update()
   end
 end
