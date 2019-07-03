@@ -34,3 +34,13 @@ notification_poc-*.tar
 # secrets files as long as you replace their contents by environment
 # variables.
 /config/*.secret.exs
+
+# Elixir Language Server (ElixirLS)
+# https://github.com/JakeBecker/elixir-ls
+/.elixir_ls
+
+# ASDF versions
+/.tool-versoins
+
+# Environment Variables
+/.env

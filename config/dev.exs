@@ -49,8 +49,8 @@ config :phoenix, :plug_init_mode, :runtime
 
 # Configure your database
 config :notification_poc, NotificationPoc.Repo,
-  username: "gleydson",
-  password: "123456",
-  database: "notification_poc_dev",
-  hostname: "localhost",
+  username: System.get_env("DB_USERNAME"),
+  password: System.get_env("DB_PASSWORD"),
+  database: System.get_env("DB_NAME"),
+  hostname: System.get_env("DB_HOST"),
   pool_size: 10
